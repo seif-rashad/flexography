@@ -1,0 +1,2151 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ترميم المطبوعات — امتحان</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #f7f6f3;
+  --surface: #ffffff;
+  --border: #e2e0da;
+  --border-strong: #c8c5bc;
+  --text: #1a1916;
+  --text-secondary: #6b6860;
+  --text-tertiary: #9e9b94;
+  --accent: #1a1916;
+  --success-bg: #c7f3cb;
+  --success-border: #76ab7a;
+  --success-text: #2d6e32;
+  --danger-bg: #ffd6d3;
+  --danger-border: #bd7771;
+  --danger-text: #8b2217;
+  --mono: 'Cairo', sans-serif;
+  --sans: 'Cairo', sans-serif;
+}
+
+html { font-size: 16px; direction: rtl; }
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+/* Layout */
+.site-header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.logo {
+  font-family: var(--sans);
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--text);
+  text-decoration: none;
+}
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+.header-stat {
+  font-size: 14px;
+  color: var(--text-tertiary);
+  font-family: var(--sans);
+}
+.header-stat span { color: var(--text); font-weight: 500; }
+
+.main {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 4rem;
+}
+
+/* Start screen */
+.start-screen { max-width: 560px; margin: 3rem auto 0; text-align: right; }
+.start-screen h1 {
+  font-size: 28px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
+  line-height: 1.2;
+}
+.start-screen .subtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 2.5rem;
+}
+.stat-row {
+  display:flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  flex-grow: 1;
+  gap: 10px;
+  margin-bottom: 2rem;
+}
+.stat-cell {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+  flex: 1;
+  min-width: 90px;
+}
+
+.stat-cell.total {
+  flex-grow: 1;
+}
+
+.stat-cell .num {
+  font-size: 28px;
+  font-weight: 500;
+  font-family: var(--mono);
+  letter-spacing: -0.02em;
+  display: block;
+  margin-bottom: 2px;
+}
+.stat-cell .lbl {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.mode-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 1.5rem;
+}
+.mode-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.25rem;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  text-align: right;
+}
+.mode-card:hover { border-color: var(--border-strong); }
+.mode-card.active {
+  border-color: var(--text);
+  box-shadow: inset 0 0 0 1px var(--text);
+}
+.mode-card .mode-title {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+.mode-card .mode-desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+.mode-card .mode-icon {
+  font-family: var(--mono);
+  font-size: 18px;
+  margin-bottom: 10px;
+  color: var(--text-tertiary);
+  text-align: left;
+}
+.btn-start {
+  width: 100%;
+  padding: 13px;
+  background: var(--text);
+  color: var(--bg);
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: var(--sans);
+  font-weight: 500;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+  transition: opacity 0.15s;
+}
+.btn-start:hover { opacity: 0.85; }
+
+/* Progress */
+.progress-track {
+  display: flex;
+  gap: 3px;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+  direction: ltr; /* keep dots LTR visually if preferred, or RTL. LTR matches standard progress bars */
+}
+.p-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  background: var(--border);
+  cursor: pointer;
+  transition: background 0.1s;
+  flex-shrink: 0;
+}
+.p-dot:hover { background: var(--border-strong); }
+.p-dot.current { background: var(--text); }
+.p-dot.ok { background: var(--success-border); }
+.p-dot.bad { background: var(--danger-border); }
+.p-dot.skipped { background: #d4c9b0; }
+
+/* Question */
+.q-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 1.75rem;
+}
+.q-num {
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--text-tertiary);
+  letter-spacing: 0.04em;
+}
+.q-section-badge {
+  font-size: 12px;
+  font-family: var(--sans);
+  color: var(--text-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 8px;
+}
+.q-text {
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.55;
+  letter-spacing: -0.01em;
+  margin-bottom: 1.75rem;
+  color: var(--text);
+}
+
+/* Options */
+.options { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1.5rem; }
+.option {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.12s, background 0.12s;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--surface);
+  text-align: right;
+  width: 100%;
+  font-family: var(--sans);
+}
+.option:hover:not(.locked) { border-color: var(--border-strong); background: #fafaf8; }
+.option .opt-key {
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  min-width: 14px;
+  padding-top: 1px;
+}
+.option.selected { border-color: var(--text); background: #f7f6f3; }
+.option.selected .opt-key { color: var(--text); }
+.option.correct { border-color: var(--success-border); background: var(--success-bg); color: var(--success-text); }
+.option.correct .opt-key { color: var(--success-text); }
+.option.wrong { border-color: var(--danger-border); background: var(--danger-bg); color: var(--danger-text); }
+.option.wrong .opt-key { color: var(--danger-text); }
+.option.reveal { border-color: var(--success-border); background: var(--success-bg); color: var(--success-text); }
+.option.reveal .opt-key { color: var(--success-text); }
+.option.locked { cursor: default; }
+
+/* Textarea for Essay */
+.textarea-essay {
+  resize: vertical;
+  min-height: 120px;
+  cursor: text;
+}
+.textarea-essay:focus {
+  outline: none;
+  border-color: var(--text);
+}
+
+/* T/F */
+.tf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 1.5rem; }
+.tf-btn {
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 400;
+  font-family: var(--sans);
+  color: var(--text);
+  background: var(--surface);
+  transition: border-color 0.12s, background 0.12s;
+  letter-spacing: 0.01em;
+}
+.tf-btn:hover:not(.locked) { border-color: var(--border-strong); }
+.tf-btn.selected { border-color: var(--text); background: #f7f6f3; font-weight: 500; }
+.tf-btn.correct { border-color: var(--success-border); background: var(--success-bg); color: var(--success-text); }
+.tf-btn.wrong { border-color: var(--danger-border); background: var(--danger-bg); color: var(--danger-text); }
+.tf-btn.reveal { border-color: var(--success-border); background: var(--success-bg); color: var(--success-text); }
+.tf-btn.locked { cursor: default; }
+
+/* Feedback */
+.feedback {
+  font-size: 14px;
+  padding: 10px 14px;
+  border-radius: 6px;
+  margin-bottom: 1.25rem;
+  font-family: var(--sans);
+}
+.feedback.ok { background: var(--success-bg); color: var(--success-text); border: 1px solid var(--success-border); }
+.feedback.bad { background: var(--danger-bg); color: var(--danger-text); border: 1px solid var(--danger-border); }
+
+/* Nav */
+.nav-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border);
+  direction: rtl;
+}
+.btn {
+  padding: 9px 20px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: var(--sans);
+  color: var(--text);
+  background: var(--surface);
+  transition: background 0.12s, border-color 0.12s;
+  font-weight: 500;
+}
+.btn:hover:not(:disabled) { background: #f0efe9; border-color: var(--border-strong); }
+.btn:disabled { opacity: 0.3; cursor: default; }
+.btn.primary {
+  background: var(--text);
+  color: white;
+  border-color: var(--text);
+}
+.btn.primary:hover { opacity: 0.85; }
+.nav-center { font-size: 14px; color: var(--text-tertiary); font-family: var(--sans); }
+
+/* Section divider */
+.section-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 2rem 0 1.75rem;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-tertiary);
+  font-family: var(--mono);
+}
+.section-divider::before, .section-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* Results */
+.results-wrap { max-width: 560px; margin: 0 auto; text-align: right;}
+.score-hero {
+  text-align: center;
+  padding: 3rem 1.5rem 2.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 1.25rem;
+}
+.score-hero .big-num {
+  font-size: 72px;
+  font-weight: 300;
+  font-family: var(--mono);
+  letter-spacing: -0.04em;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.score-hero .grade-badge {
+  display: inline-block;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 500;
+  padding: 3px 12px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+}
+.results-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 1.5rem;
+}
+.r-cell {
+  background: var(--bg);
+  border-radius: 6px;
+  padding: 0.75rem;
+  text-align: center;
+}
+.r-cell .rn { font-size: 22px; font-weight: 500; font-family: var(--mono); letter-spacing: -0.02em; }
+.r-cell .rl { font-size: 12px; color: var(--text-tertiary); font-family: var(--sans); margin-top: 2px; }
+.btn-retake {
+  width: 100%;
+  padding: 11px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: var(--sans);
+  color: var(--text-secondary);
+  background: transparent;
+  cursor: pointer;
+}
+.btn-retake:hover { background: var(--bg); border-color: var(--border-strong); }
+
+/* Review */
+.review-section { margin-top: 2rem; }
+.review-section h2 {
+  font-size: 16px;
+  color: var(--text-tertiary);
+  font-weight: 500;
+  font-family: var(--sans);
+  margin-bottom: 1rem;
+}
+.review-item {
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.review-item:last-child { border-bottom: none; }
+.review-qnum {
+  font-size: 12px;
+  font-family: var(--sans);
+  color: var(--text-tertiary);
+  margin-bottom: 5px;
+}
+.review-qtext {
+  font-size: 16px;
+  color: var(--text);
+  line-height: 1.5;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+.review-your {
+  font-size: 14px;
+  font-family: var(--sans);
+  color: var(--danger-text);
+  margin-bottom: 2px;
+}
+.review-correct {
+  font-size: 14px;
+  font-family: var(--sans);
+  color: var(--success-text);
+}
+
+/* Unanswered notice */
+.notice {
+  font-size: 14px;
+  color: var(--text-tertiary);
+  font-family: var(--sans);
+  padding: 8px 12px;
+  border: 1px dashed var(--border);
+  border-radius: 6px;
+  margin-bottom: 1.5rem;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .main { padding: 1.5rem 1rem 3rem; }
+  .site-header { padding: 0 1rem; }
+  .q-text { font-size: 16px; }
+  .header-stat { display: none; }
+  .results-grid, .stat-row { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <a class="logo" href="#">ترميم المطبوعات — امتحان</a>
+  <div class="header-right">
+    <div class="header-stat" id="hdr-stat">—</div>
+  </div>
+</header>
+
+<main class="main" id="app"></main>
+
+<script>
+const ANSWERS = {
+  "Q1": "ب",
+  "Q2": "أ",
+  "Q3": "ج",
+  "Q4": "أ",
+  "Q5": "د",
+  "Q6": "ب",
+  "Q7": "أ",
+  "Q8": "ج",
+  "Q9": "د",
+  "Q10": "ب",
+  "Q11": "أ",
+  "Q12": "ج",
+  "Q13": "أ",
+  "Q14": "ب",
+  "Q15": "د",
+  "Q16": "أ",
+  "Q17": "ج",
+  "Q18": "ب",
+  "Q19": "د",
+  "Q20": "أ",
+  "Q21": "ج",
+  "Q22": "ب",
+  "Q23": "د",
+  "Q24": "أ",
+  "Q25": "ج",
+  "Q26": "أ",
+  "Q27": "ج",
+  "Q28": "د",
+  "Q29": "ب",
+  "Q30": "أ",
+  "Q31": "ج",
+  "Q32": "ب",
+  "Q33": "أ",
+  "Q34": "د",
+  "Q35": "ج",
+  "Q36": "أ",
+  "Q37": "ب",
+  "Q38": "د",
+  "Q39": "أ",
+  "Q40": "ج",
+  "Q41": "ب",
+  "Q42": "أ",
+  "Q43": "ج",
+  "Q44": "د",
+  "Q45": "أ",
+  "Q46": "ب",
+  "Q47": "ج",
+  "Q48": "د",
+  "Q49": "أ",
+  "Q50": "ب",
+  "Q51": "ج",
+  "Q52": "أ",
+  "Q53": "ب",
+  "Q54": "د",
+  "Q55": "أ",
+  "Q56": "ج",
+  "Q57": "ب",
+  "Q58": "أ",
+  "Q59": "د",
+  "Q60": "ج",
+  "Q61": "أ",
+  "Q62": "ب",
+  "Q63": "د",
+  "Q64": "أ",
+  "Q65": "ج",
+  "Q66": "ب",
+  "Q67": "د",
+  "Q68": "أ",
+  "Q69": "ج",
+  "Q70": "ب",
+  "Q71": "د",
+  "Q72": "أ",
+  "Q73": "ج",
+  "Q74": "ب",
+  "Q75": "د",
+  "Q76": "أ",
+  "Q77": "ج",
+  "Q78": "ب",
+  "Q79": "د",
+  "Q80": "أ",
+  "Q81": "ج",
+  "Q82": "ب",
+  "Q83": "د",
+  "Q84": "أ",
+  "Q85": "ج",
+  "Q86": "ب",
+  "Q87": "د",
+  "Q88": "أ",
+  "Q89": "ج",
+  "Q90": "ب",
+  "Q91": "د",
+  "Q92": "أ",
+  "Q93": "ج",
+  "Q94": "ب",
+  "Q95": "د",
+  "Q96": "أ",
+  "Q97": "ج",
+  "Q98": "ب",
+  "Q99": "د",
+  "Q100": "أ",
+  "Q101": "تعتبر طباعة الفلكسوغرافيا شكلاً متطوراً من أشكال الطباعة البارزة (Letterpress). تعتمد فكرتها الأساسية على استخدام لوح طباعي مرن (مصنوع عادة من البوليمر الضوئي أو المطاط) يحمل تصميماً بارزاً. يتم نقل الحبر السائل السريع الجفاف إلى الأجزاء البارزة من اللوح عبر أسطوانة متخصصة تسمى (الأنيلوكس). ثم يقوم اللوح بنقل الحبر مباشرة إلى الخامة الطباعية (الورق، البلاستيك، الكرتون المضلع) تحت ضغط خفيف يُعرف بـ Kiss Impression. تمتاز هذه الطريقة بقدرتها على الطباعة على مجموعة واسعة جداً من الخامات المسامية وغير المسامية، وهي الطريقة المهيمنة في صناعة التعبئة والتغليف.",
+  "Q102": "أسطوانة الأنيلوكس (Anilox Roller) هي 'قلب' وحدة الطباعة الفلكسوغرافية. هي عبارة عن أسطوانة معدنية مغطاة بطبقة صلبة من السيراميك (أو الكروم قديماً) ومحفورة بالليزر لتحتوي على ملايين الخلايا المجهرية الدقيقة (Microscopic Cells) على سطحها. وظيفتها الأساسية هي سحب الحبر من الحوض، ثم يتم كشط الحبر الزائد من سطحها بواسطة شفرة (Doctor Blade) بحيث يتبقى الحبر داخل الخلايا فقط. بعد ذلك، تقوم الأسطوانة بنقل كمية دقيقة وثابتة ومحسوبة من الحبر إلى الأجزاء البارزة من اللوح الطباعي، مما يضمن تجانساً لونياً دقيقاً طوال عملية التشغيل.",
+  "Q103": "هناك عدة عوامل تجعل الفلكسو الخيار الأول للكرتون المضلع: أولاً، استخدام 'الضغط الخفيف' (Kiss Impression) الذي يمنع سحق أو إتلاف التمويج الداخلي للكرتون (Flutes) ويحافظ على صلابته. ثانياً، مرونة الألواح الطباعية التي تتكيف مع خشونة وعدم استواء سطح الكرتون. ثالثاً، استخدام الأحبار المائية سريعة الجفاف والآمنة لتغليف الأغذية، والتي تمتصها ألياف الكرتون بسهولة. رابعاً، القدرة على دمج عمليات الطباعة والتكسير والطي واللصق في خط إنتاج واحد متصل (Inline).",
+  "Q104": "تتكون وحدة الطباعة النمطية للفلكسو في الأنظمة الحديثة المزودة بغرفة مغلقة (Chambered Doctor Blade) من ثلاث مكونات رئيسية: 1. أسطوانة الأنيلوكس مع غرفة الحبر المغلقة: لتزويد اللوح بكمية حبر دقيقة، 2. أسطوانة اللوح الطباعي (Plate Cylinder): التي يُثبت عليها لوح البوليمر المرن بواسطة شريط لاصق مزدوج (Mounting Tape)، 3. أسطوانة الضغط (Impression Cylinder): وهي أسطوانة معدنية ملساء تدعم الخامة من الخلف وتوفر الضغط المناسب لنقل الحبر من اللوح إلى الخامة.",
+  "Q105": "زيادة حجم النقطة (Dot Gain) هو عيب طباعي متمثل في طباعة نقطة الحبر بحجم أكبر من حجمها الفعلي في اللوح، مما يؤدي إلى صورة أغمق وفقدان التفاصيل. أسبابه الرئيسية في الفلكسو هي: 1. الضغط الزائد بين اللوح وأسطوانة الضغط، 2. الضغط الزائد بين الأنيلوكس واللوح، 3. استخدام أحبار خفيفة جداً أو ذات لزوجة خاطئة، 4. مرونة اللوح الطباعي بحد ذاتها (التي تتمدد تحت الضغط). يتم تعويضه (Compensation) أثناء مرحلة ما قبل الطباعة (Prepress) بتقليل حجم النقاط في التصميم الرقمي بنسبة مدروسة (منحنى التعويض Dot Gain Curve) بحيث تعطي الحجم الصحيح عند الطباعة.",
+  "Q106": "يحدث تشوه أو استطالة اللوح (Plate Distortion) في الفلكسو لأن لوح البوليمر المرن يتم صناعته وتصويره وهو مسطح (Flat)، ولكن عند لفه حول أسطوانة الطباعة الدائرية، يتمدد السطح الخارجي للوح (الذي يحمل الصورة الطباعية) بينما ينكمش السطح الداخلي. هذا التمدد يؤدي إلى استطالة الصورة المطبوعة في اتجاه دوران الأسطوانة. يتم معالجة هذه المشكلة عن طريق ضغط الصورة (تقليل أبعادها في اتجاه الدوران فقط) أثناء مرحلة ما قبل الطباعة أو التصميم، باستخدام برامج متخصصة تحسب نسبة التشوه بناءً على سمك اللوح وقطر الأسطوانة.",
+  "Q107": "طباعة الـ (CI - Central Impression) هي ماكينة فلكسو تعتمد على أسطوانة ضغط مركزية واحدة وكبيرة جداً تدور حولها جميع وحدات الطباعة (التي قد تصل إلى 8 أو 10 ألوان). الميزة الجوهرية لهذا التصميم هي 'دقة التطابق اللوني الفائقة' (Excellent Registration). نظراً لأن الخامة تُمسك بقوة وتلتف حول الأسطوانة المركزية المبردة وتتحرك معها كوحدة واحدة دون أن تتعرض للشد الميكانيكي المستقل بين كل لون وآخر، فإن هذه الماكينات تعتبر مثالية للطباعة على الخامات المرنة جداً والقابلة للتمدد، مثل أفلام البولي إيثيلين الرقيقة في التغليف المرن.",
+  "Q108": "الأحبار القائمة على المذيبات (Solvent-based Inks) تجف بسرعة عالية جداً عن طريق تبخر المذيبات العضوية، ولديها قدرة ممتازة على الالتصاق بالأسطح البلاستيكية غير المسامية، لكنها تطلق انبعاثات ضارة (VOCs) تتطلب أنظمة سحب وحرق مكلفة لحماية البيئة وأمان العمال. أما الأحبار المائية (Water-based Inks) فتستخدم الماء كمذيب رئيسي، وهي آمنة بيئياً وصديقة للصحة وتُستخدم بكثرة مع الخامات المسامية كالورق والكرتون، لكنها أبطأ في الجفاف على البلاستيك. أما أحبار الأشعة فوق البنفسجية (UV Inks) فلا تحتوي على مذيبات (100% صلبة)، بل تتصلد فوراً عند تعرضها للأشعة فوق البنفسجية، وتوفر جودة عالية وثباتاً ولمعاناً فائقاً، وتستخدم بكثرة في قطاع الملصقات (Labels).",
+  "Q109": "طبيب الشفرة (Doctor Blade) هو شفرة معدنية أو بلاستيكية رقيقة تلامس أسطوانة الأنيلوكس بزاوية معينة (غالباً بوضع القطع العكسي Reverse angle). وظيفته الأساسية هي قشط وإزالة أي حبر زائد من على سطح أسطوانة الأنيلوكس الخارجية، وترك الحبر فقط داخل الخلايا الغائرة للأسطوانة. هذا يضمن أن الكمية المنقولة إلى اللوح الطباعي هي كمية دقيقة جداً ومحكومة فقط بحجم وعمق خلايا الأنيلوكس، مما يوفر تجانساً لونياً ثابتاً لا يتأثر بسرعة الماكينة أو بلزوجة الحبر بشكل مباشر.",
+  "Q110": "عملية النقش المباشر بالليزر (Direct Laser Engraving - DLE) أو الـ CTP للفلكسو تختلف تماماً عن الطريقة التقليدية (التصوير التناظري بالفيلم السلبي والأشعة فوق البنفسجية والغسيل بالمذيبات). في الـ CTP، يُغطى لوح البوليمر بطبقة كربونية سوداء (Mask). يقوم الليزر بحرق هذه الطبقة السوداء في المناطق الطباعية فقط (تكوين صورة إيجابية). ثم يُعرض اللوح للأشعة فوق البنفسجية التي تعبر من الأماكن المحروقة لتصليد البوليمر تحتها، يلي ذلك عملية غسيل وتجفيف. في أنظمة DLE الأكثر تقدماً (النقش ثلاثي الأبعاد المباشر)، يقوم ليزر قوي بنحت وحرق المطاط أو البوليمر المجهز مباشرة لإزالة الأجزاء غير الطباعية تماماً في خطوة واحدة، دون الحاجة إلى تعريض أو غسيل أو تجفيف، مما يسرع العملية ويزيد الدقة.",
+  "Q111": "معالجة الكورونا (Corona Treatment) هي عملية تفريغ كهربائي عالي الجهد يتم تطبيقها على سطح الأفلام البلاستيكية الرقيقة قبل دخولها إلى وحدات الطباعة. البلاستيك مثل (PE و PP) بطبيعته ذو توتر سطحي منخفض وخامل كيميائياً، مما يجعل من الصعب على الحبر الالتصاق به. تفريغ الكورونا يقوم بأكسدة وتخديش سطح الفيلم على المستوى الجزيئي، مما يرفع من طاقته أو توتره السطحي (Surface Tension)، فيسمح لقطرات الحبر بالانتشار والالتصاق القوي بسطح البلاستيك وتجنب تقشر الحبر بعد الجفاف.",
+  "Q112": "الـ 'شريط اللاصق المزدوج' (Mounting Tape) في الفلكسو لا يقتصر دوره على تثبيت اللوح على الأسطوانة فحسب، بل يلعب دوراً ميكانيكياً حاسماً. يتوفر الشريط بدرجات صلابة مختلفة (أشرطة صلبة، متوسطة، إسفنجية/ناعمة). الأشرطة الصلبة تُستخدم لطباعة 'الأرضيات' (Solids) المليئة بالحبر لأنها توفر ضغطاً كافياً لنقل الحبر بكثافة عالية دون ترك فراغات. الأشرطة الناعمة (Cushion tapes) تُستخدم لطباعة 'الشبكات والتفاصيل الدقيقة' (Halftones) لأنها تعمل كممتص للصدمات (Cushion)، فتقلل الضغط المباشر على النقاط الدقيقة وتمنع زيادة حجم النقطة (Dot Gain) المفرط، مما يوفر دقة عالية.",
+  "Q113": "عند طباعة ألوان متعددة تعتمد على زوايا شبكية (CMYK)، إذا تم اختيار زوايا غير صحيحة أو إذا حدثت إزاحة ميكانيكية، تتقاطع خطوط النقاط وتتداخل الألوان بشكل غير متناسق لتُنتج نمطاً بصرياً متكرراً ومزعجاً للعين يشبه النسيج المتموج، وهذا ما يسمى بتأثير 'المواريه' (Moiré). لتجنب ذلك في الفلكسو، يجب ضبط زوايا الشبكات بدقة، بحيث يكون هناك فارق 30 درجة بين الألوان القوية (عادة الأسود 45، الماجنتا 75، السماوي 15) ووضع اللون الأصفر (الأقل وضوحاً) عند زاوية 90 أو 0 درجة. كما يراعى استخدام أسطوانة أنيلوكس بزاوية 60 درجة وبكثافة خطوط تفوق كثافة اللوح بـ 5-6 مرات لمنع التداخل بين خلايا الأنيلوكس وشبكة اللوح.",
+  "Q114": "في أحبار الفلكسو المائية، ترتبط اللزوجة ودرجة الـ pH (الأس الهيدروجيني) ارتباطاً وثيقاً. لكي تبقى الراتنجات (الوسيط الرابط) في حالة سائلة ومذابة في الماء، يجب إبقاء الحبر في بيئة قلوية (عادة pH من 8.5 إلى 9.5) باستخدام الأمينات أو الأمونيا المضافة. إذا تطايرت الأمونيا أثناء التشغيل وانخفض الـ pH، ستبدأ الراتنجات في التخثر (الانفصال) وسترتفع اللزوجة بشكل ملحوظ، مما يؤدي إلى جفاف الحبر داخل خلايا الأنيلوكس وعلى اللوح، وتصبح الطباعة غير نظيفة. لذلك يجب قياس وضبط الـ pH أولاً قبل إضافة الماء لتخفيف اللزوجة.",
+  "Q115": "أهم إجراءات الأمن والسلامة في مطابع الفلكسو (خاصة التي تستخدم الأحبار المذيبة) تشمل: 1. التهوية الجيدة: استخدام أنظمة سحب هواء (Exhaust) للتخلص من أبخرة المذيبات (VOCs) السامة والمانعة للاختناق. 2. مكافحة الحرائق: بما أن المذيبات شديدة الاشتعال، يجب إبعاد مصادر اللهب المفتوح (No Smoking/No Open Flames)، وتأريض جميع المعدات (Grounding) لتفريغ الكهرباء الاستاتيكية التي قد تسبب شرارة. 3. معدات الوقاية الشخصية (PPE): ارتداء القفازات والنظارات الواقية للتعامل مع الكيماويات والمذيبات، وارتداء سدادات الأذن (Earplugs) للوقاية من الضوضاء العالية الناتجة عن الماكينات والمجففات. 4. التخزين الآمن: تخزين الأحبار والمذيبات في غرف مقاومة للحريق ومعزولة."
+};
+
+const QUESTIONS = [
+  {
+    "id": "Q1",
+    "type": "mcq",
+    "section": "أساسيات الفلكسو",
+    "text": "ما هي طباعة الفلكسو (Flexography)؟",
+    "options": {
+      "أ": "طريقة طباعة غائرة تستخدم أسطوانات نحاسية",
+      "ب": "طريقة طباعة بارزة تستخدم ألواحاً مرنة",
+      "ج": "طريقة طباعة مسطحة تعتمد على تنافر الماء والحبر",
+      "د": "طريقة طباعة رقمية تعتمد على نفث الحبر"
+    }
+  },
+  {
+    "id": "Q2",
+    "type": "mcq",
+    "section": "أساسيات الفلكسو",
+    "text": "في أي عام تقريباً بدأت تكنولوجيا الفلكسو بالظهور تحت اسم 'الطباعة بالأنيلين'؟",
+    "options": {
+      "أ": "في أواخر القرن التاسع عشر",
+      "ب": "في منتصف القرن العشرين",
+      "ج": "في أواخر القرن العشرين",
+      "د": "في بداية القرن الحادي والعشرين"
+    }
+  },
+  {
+    "id": "Q3",
+    "type": "mcq",
+    "section": "أساسيات الفلكسو",
+    "text": "ما هو الاسم القديم الذي كان يطلق على طباعة الفلكسو؟",
+    "options": {
+      "أ": "الطباعة الحجرية",
+      "ب": "الطباعة الغائرة",
+      "ج": "الطباعة بالأنيلين",
+      "د": "الطباعة الأوفست"
+    }
+  },
+  {
+    "id": "Q4",
+    "type": "mcq",
+    "section": "أساسيات الفلكسو",
+    "text": "لماذا تم تغيير اسم الطباعة بالأنيلين إلى الفلكسوغرافيا؟",
+    "options": {
+      "أ": "بسبب سمية أحبار الأنيلين ولتحسين صورة الصناعة",
+      "ب": "لأنها أصبحت تستخدم أحباراً مائية فقط",
+      "ج": "بسبب اختراع أسطوانة الأنيلوكس",
+      "د": "بسبب استخدام تقنية الليزر"
+    }
+  },
+  {
+    "id": "Q5",
+    "type": "mcq",
+    "section": "أساسيات الفلكسو",
+    "text": "أي من المنتجات التالية يعتبر التطبيق الرئيسي لطباعة الفلكسو؟",
+    "options": {
+      "أ": "الكتب والمجلات",
+      "ب": "الصحف اليومية",
+      "ج": "الكتيبات الإعلانية",
+      "د": "مواد التعبئة والتغليف"
+    }
+  },
+  {
+    "id": "Q6",
+    "type": "mcq",
+    "section": "أساسيات الفلكسو",
+    "text": "ما الميزة الرئيسية لألواح الفلكسو التي تسمح بالطباعة على الخامات الخشنة؟",
+    "options": {
+      "أ": "صلابتها العالية",
+      "ب": "مرونتها (Flexibility)",
+      "ج": "سمكها الرقيق جداً",
+      "د": "مقاومتها للحرارة"
+    }
+  },
+  {
+    "id": "Q7",
+    "type": "mcq",
+    "section": "أساسيات الفلكسو",
+    "text": "ما هي المادة الأساسية التي تصنع منها ألواح الفلكسو الحديثة؟",
+    "options": {
+      "أ": "البوليمر الضوئي (Photopolymer)",
+      "ب": "الألومنيوم",
+      "ج": "الزنك",
+      "د": "الخشب"
+    }
+  },
+  {
+    "id": "Q8",
+    "type": "mcq",
+    "section": "أساسيات الفلكسو",
+    "text": "ما هي الوظيفة الأساسية لأسطوانة الأنيلوكس (Anilox) في ماكينة الفلكسو؟",
+    "options": {
+      "أ": "الضغط على الخامة المطبوعة",
+      "ب": "تثبيت اللوح الطباعي",
+      "ج": "نقل كمية دقيقة من الحبر إلى اللوح الطباعي",
+      "د": "تجفيف الحبر بعد الطباعة"
+    }
+  },
+  {
+    "id": "Q9",
+    "type": "mcq",
+    "section": "أساسيات الفلكسو",
+    "text": "أي من الخامات التالية يمكن طباعتها بنجاح باستخدام الفلكسو؟",
+    "options": {
+      "أ": "الورق فقط",
+      "ب": "البلاستيك فقط",
+      "ج": "الكرتون المضلع فقط",
+      "د": "جميع ما سبق (ورق، بلاستيك، كرتون مضلع، إلخ)"
+    }
+  },
+  {
+    "id": "Q10",
+    "type": "mcq",
+    "section": "أساسيات الفلكسو",
+    "text": "كيف يتم تجفيف الأحبار المائية أو الكحولية في طباعة الفلكسو؟",
+    "options": {
+      "أ": "بالأشعة فوق البنفسجية فقط",
+      "ب": "عن طريق التبخر باستخدام الهواء الساخن",
+      "ج": "عن طريق الامتصاص في الخامة فقط",
+      "د": "بالتبريد السريع"
+    }
+  },
+  {
+    "id": "Q11",
+    "type": "mcq",
+    "section": "تطور الفلكسو",
+    "text": "ما هو دور طبيب الشفرة (Doctor Blade) في نظام التحبير؟",
+    "options": {
+      "أ": "إزالة الحبر الزائد من على سطح أسطوانة الأنيلوكس",
+      "ب": "تنظيف اللوح الطباعي",
+      "ج": "تبريد أسطوانة الطباعة",
+      "د": "مراقبة جودة الطباعة"
+    }
+  },
+  {
+    "id": "Q12",
+    "type": "mcq",
+    "section": "تطور الفلكسو",
+    "text": "ما هي المادة التي كانت تستخدم قديماً لصناعة ألواح الفلكسو قبل البوليمر الضوئي؟",
+    "options": {
+      "أ": "البلاستيك",
+      "ب": "النحاس",
+      "ج": "المطاط (Rubber)",
+      "د": "الصلب"
+    }
+  },
+  {
+    "id": "Q13",
+    "type": "mcq",
+    "section": "تطور الفلكسو",
+    "text": "أي نوع من الأحبار يعتبر الأكثر صداقة للبيئة ويستخدم بكثرة في الفلكسو للكرتون؟",
+    "options": {
+      "أ": "الأحبار المائية (Water-based)",
+      "ب": "الأحبار الكحولية",
+      "ج": "الأحبار البترولية",
+      "د": "الأحبار القائمة على المذيبات القوية"
+    }
+  },
+  {
+    "id": "Q14",
+    "type": "mcq",
+    "section": "مكونات الماكينة",
+    "text": "كم عدد الأسطوانات الأساسية في وحدة الطباعة النمطية للفلكسو؟",
+    "options": {
+      "أ": "أسطوانتان",
+      "ب": "أربع أسطوانات (أو ثلاث في بعض الأنظمة المباشرة)",
+      "ج": "ست أسطوانات",
+      "د": "أسطوانة واحدة"
+    }
+  },
+  {
+    "id": "Q15",
+    "type": "mcq",
+    "section": "مكونات الماكينة",
+    "text": "ما هي الأسطوانة المسؤولة عن أخذ الحبر من الحوض في النظام ثنائي الأسطوانات؟",
+    "options": {
+      "أ": "أسطوانة الطباعة",
+      "ب": "أسطوانة الضغط",
+      "ج": "أسطوانة الأنيلوكس",
+      "د": "أسطوانة المطاط (النافورة)"
+    }
+  },
+  {
+    "id": "Q16",
+    "type": "mcq",
+    "section": "مكونات الماكينة",
+    "text": "أسطوانة الطبع (Plate Cylinder) في الفلكسو تُصنع عادةً من:",
+    "options": {
+      "أ": "الصلب أو الألومنيوم",
+      "ب": "الخشب",
+      "ج": "الزجاج",
+      "د": "المطاط المرن"
+    }
+  },
+  {
+    "id": "Q17",
+    "type": "mcq",
+    "section": "مكونات الماكينة",
+    "text": "ما الذي يحدد حجم التكرار الطباعي (Repeat length) في ماكينة الفلكسو؟",
+    "options": {
+      "أ": "سرعة الماكينة",
+      "ب": "كمية الحبر",
+      "ج": "محيط أسطوانة اللوح الطباعي (بما في ذلك اللوح والشريط اللاصق)",
+      "د": "قطر أسطوانة الأنيلوكس"
+    }
+  },
+  {
+    "id": "Q18",
+    "type": "mcq",
+    "section": "مكونات الماكينة",
+    "text": "ما هو الشريط المزدوج اللصق (Mounting Tape) أو 'الدبل فيس'؟",
+    "options": {
+      "أ": "شريط لتغليف المنتج النهائي",
+      "ب": "شريط يستخدم لتثبيت اللوح المرن على أسطوانة الطبع",
+      "ج": "شريط لتنظيف أسطوانة الأنيلوكس",
+      "د": "شريط قياس سمك الخامة"
+    }
+  },
+  {
+    "id": "Q19",
+    "type": "mcq",
+    "section": "مكونات الماكينة",
+    "text": "كيف يؤثر سمك وصلابة الشريط اللاصق (Mounting Tape) على جودة الطباعة؟",
+    "options": {
+      "أ": "لا يؤثر على الإطلاق",
+      "ب": "يؤثر فقط على سرعة الجفاف",
+      "ج": "الشريط الصلب يستخدم للشبكات والناعم للأرضيات",
+      "د": "الشريط الناعم أو الإسفنجي أفضل لطباعة الشبكات الدقيقة (Halftones)، والصلب للأرضيات"
+    }
+  },
+  {
+    "id": "Q20",
+    "type": "mcq",
+    "section": "أنظمة التحبير",
+    "text": "في نظام الغرفة المغلقة (Chambered Doctor Blade)، كم عدد الشفرات المستخدمة عادة؟",
+    "options": {
+      "أ": "شفرتان (واحدة للختم والأخرى للقشط)",
+      "ب": "شفرة واحدة",
+      "ج": "ثلاث شفرات",
+      "د": "لا توجد شفرات"
+    }
+  },
+  {
+    "id": "Q21",
+    "type": "mcq",
+    "section": "أنظمة التحبير",
+    "text": "ما هي المادة التي تُطلى بها أسطوانة الأنيلوكس عادةً لتحمل التآكل؟",
+    "options": {
+      "أ": "البلاستيك",
+      "ب": "المطاط",
+      "ج": "السيراميك",
+      "د": "النحاس"
+    }
+  },
+  {
+    "id": "Q22",
+    "type": "mcq",
+    "section": "أنظمة التحبير",
+    "text": "بماذا تقاس سعة خلايا أسطوانة الأنيلوكس؟",
+    "options": {
+      "أ": "بالمتر المكعب",
+      "ب": "بالسنتيمتر المكعب لكل متر مربع أو (BCM/sq in)",
+      "ج": "باللتر",
+      "د": "بالجرام"
+    }
+  },
+  {
+    "id": "Q23",
+    "type": "mcq",
+    "section": "أنظمة التحبير",
+    "text": "الأسطوانة ذات عدد الخلايا الكبير (High Line Screen) في الأنيلوكس تستخدم لـ:",
+    "options": {
+      "أ": "طباعة الأرضيات الغزيرة بالحبر",
+      "ب": "طباعة الألوان الفسفورية",
+      "ج": "طباعة الورنيش",
+      "د": "طباعة التفاصيل الدقيقة والشبكات (Halftones)"
+    }
+  },
+  {
+    "id": "Q24",
+    "type": "mcq",
+    "section": "تجهيز الألواح",
+    "text": "ما هو الفيلم السلبي (Negative Film) في تجهيز ألواح الفلكسو التقليدية؟",
+    "options": {
+      "أ": "فيلم يحتوي على الصورة معكوسة بحيث تكون المناطق الطباعية شفافة وغير الطباعية سوداء",
+      "ب": "فيلم أسود بالكامل",
+      "ج": "فيلم لونه أحمر يمنع الضوء",
+      "د": "شريط لاصق لتثبيت اللوح"
+    }
+  },
+  {
+    "id": "Q25",
+    "type": "mcq",
+    "section": "تجهيز الألواح",
+    "text": "ما هو أول تعريض ضوئي (Back Exposure) للوح البوليمر؟",
+    "options": {
+      "أ": "التعريض من الأمام لتشكيل الصورة",
+      "ب": "تعريض اللوح للحرارة",
+      "ج": "تعريض ظهر اللوح للأشعة فوق البنفسجية لتكوين القاعدة (Floor) وتحديد عمق النقش",
+      "د": "تجفيف اللوح بعد الغسيل"
+    }
+  },
+  {
+    "id": "Q26",
+    "type": "mcq",
+    "section": "تجهيز الألواح",
+    "text": "ما هي الخطوة التي تلي التعريض الأمامي (Main Exposure) للوح البوليمر؟",
+    "options": {
+      "أ": "الغسيل (Washing out) لإزالة البوليمر غير المتصلد",
+      "ب": "التجفيف بالهواء البارد",
+      "ج": "الطباعة مباشرة",
+      "د": "إزالة الشريط اللاصق"
+    }
+  },
+  {
+    "id": "Q27",
+    "type": "mcq",
+    "section": "تجهيز الألواح",
+    "text": "في أنظمة صناعة الألواح الرقمية (CTP)، ما الذي يحل محل الفيلم السلبي التقليدي؟",
+    "options": {
+      "أ": "ورق الكربون",
+      "ب": "فيلم إيجابي",
+      "ج": "طبقة كربونية سوداء (Mask) يتم إزالتها بالليزر",
+      "د": "ورق حراري"
+    }
+  },
+  {
+    "id": "Q28",
+    "type": "mcq",
+    "section": "تجهيز الألواح",
+    "text": "ما هي الفائدة الرئيسية لتقنية النقش المباشر بالليزر (Direct Laser Engraving)؟",
+    "options": {
+      "أ": "استخدام أحبار أكثر كثافة",
+      "ب": "تقليل سرعة الطباعة",
+      "ج": "الاستغناء عن أسطوانة الأنيلوكس",
+      "د": "الاستغناء عن خطوات التعريض الضوئي والغسيل والتجفيف"
+    }
+  },
+  {
+    "id": "Q29",
+    "type": "mcq",
+    "section": "تجهيز الألواح",
+    "text": "لماذا يتم عمل تعريض نهائي (Light Finishing / Detack) للوح البوليمر؟",
+    "options": {
+      "أ": "لإعطاء اللوح لونه النهائي",
+      "ب": "لإزالة اللزوجة من سطح اللوح وزيادة صلابته",
+      "ج": "لتخفيف وزن اللوح",
+      "د": "لتسريع عملية الطباعة"
+    }
+  },
+  {
+    "id": "Q30",
+    "type": "mcq",
+    "section": "تجهيز الألواح",
+    "text": "ما المقصود بتشوه اللوح (Plate Elongation / Distortion) في الفلكسو؟",
+    "options": {
+      "أ": "تمدد اللوح عند لفه حول أسطوانة الطبع مما يؤدي لاستطالة الصورة",
+      "ب": "تآكل اللوح بسبب الأحبار",
+      "ج": "انكماش اللوح عند التجفيف",
+      "د": "تمزق اللوح أثناء الطباعة"
+    }
+  },
+  {
+    "id": "Q31",
+    "type": "mcq",
+    "section": "تجهيز الألواح",
+    "text": "كيف يتم تعويض استطالة اللوح (Distortion) قبل عمل الألواح؟",
+    "options": {
+      "أ": "بزيادة سمك الشريط اللاصق",
+      "ب": "بتسخين اللوح قبل اللف",
+      "ج": "بضغط الصورة (تصغيرها) في اتجاه الدوران أثناء التصميم (Pre-press)",
+      "د": "باستخدام أحبار مرنة"
+    }
+  },
+  {
+    "id": "Q32",
+    "type": "mcq",
+    "section": "أسطوانات الأنيلوكس",
+    "text": "ما هو شكل الزوايا الأكثر شيوعاً لخلايا أسطوانة الأنيلوكس؟",
+    "options": {
+      "أ": "30 درجة",
+      "ب": "60 درجة",
+      "ج": "90 درجة",
+      "د": "120 درجة"
+    }
+  },
+  {
+    "id": "Q33",
+    "type": "mcq",
+    "section": "أسطوانات الأنيلوكس",
+    "text": "كلما زاد عدد خطوط أسطوانة الأنيلوكس (Line count)، ماذا يحدث لحجم الخلايا؟",
+    "options": {
+      "أ": "يقل حجم الخلايا وتقل كمية الحبر المنقولة",
+      "ب": "يزداد حجم الخلايا",
+      "ج": "لا يتغير حجم الخلايا",
+      "د": "يزداد عمق الخلايا فقط"
+    }
+  },
+  {
+    "id": "Q34",
+    "type": "mcq",
+    "section": "أسطوانات الأنيلوكس",
+    "text": "كيف يتم تنظيف أسطوانات الأنيلوكس بشكل عميق؟",
+    "options": {
+      "أ": "بالماء والصابون فقط",
+      "ب": "بالهواء المضغوط فقط",
+      "ج": "باستخدام فرشاة سلكية قاسية",
+      "د": "باستخدام الموجات فوق الصوتية (Ultrasonic) أو الكشط الكيميائي والفيزيائي"
+    }
+  },
+  {
+    "id": "Q35",
+    "type": "mcq",
+    "section": "أسطوانات الأنيلوكس",
+    "text": "لماذا لا يُنصح باستخدام أدوات معدنية لتنظيف أسطوانة الأنيلوكس السيراميكية؟",
+    "options": {
+      "أ": "لأنها تسبب الصدأ",
+      "ب": "لأنها غالية الثمن",
+      "ج": "لأنها قد تدمر الجدران الرقيقة للخلايا السيراميكية",
+      "د": "لأنها تتفاعل مع الحبر"
+    }
+  },
+  {
+    "id": "Q36",
+    "type": "mcq",
+    "section": "شفرات الدكتور بليد",
+    "text": "ما هي الزاوية المثالية لملامسة شفرة الطبيب (Doctor Blade) لأسطوانة الأنيلوكس عادة؟",
+    "options": {
+      "أ": "بين 30 إلى 35 درجة (في وضع القطع Reverse angle)",
+      "ب": "90 درجة عمودية",
+      "ج": "180 درجة",
+      "د": "10 درجات فقط"
+    }
+  },
+  {
+    "id": "Q37",
+    "type": "mcq",
+    "section": "شفرات الدكتور بليد",
+    "text": "مما تصنع شفرات (Doctor Blades) في الغالب؟",
+    "options": {
+      "أ": "الخشب أو الكرتون",
+      "ب": "الصلب (Steel) أو البلاستيك",
+      "ج": "الزجاج",
+      "د": "النحاس فقط"
+    }
+  },
+  {
+    "id": "Q38",
+    "type": "mcq",
+    "section": "شفرات الدكتور بليد",
+    "text": "متى يُفضل استخدام شفرات البلاستيك بدلاً من الصلب؟",
+    "options": {
+      "أ": "عند الحاجة لطباعة دقيقة جداً",
+      "ب": "عند استخدام أحبار عالية اللزوجة",
+      "ج": "لا يتم استخدامها أبداً",
+      "د": "عندما يكون تقليل التآكل في أسطوانة الأنيلوكس أو تجنب الشرارة (السلامة) أمراً مهماً"
+    }
+  },
+  {
+    "id": "Q39",
+    "type": "mcq",
+    "section": "شفرات الدكتور بليد",
+    "text": "ما هو عيب الضغط الزائد لشفرة الطبيب على الأنيلوكس؟",
+    "options": {
+      "أ": "زيادة التآكل في الشفرة والأسطوانة وتقليل جودة نقل الحبر",
+      "ب": "تسرب الحبر من الأطراف",
+      "ج": "تقليل سرعة الماكينة تلقائياً",
+      "د": "زيادة جفاف الحبر"
+    }
+  },
+  {
+    "id": "Q40",
+    "type": "mcq",
+    "section": "ماكينات الفلكسو",
+    "text": "أي نوع من ماكينات الفلكسو يمتاز بوجود أسطوانة ضغط مركزية كبيرة (CI)؟",
+    "options": {
+      "أ": "الماكينات المستقيمة (Inline)",
+      "ب": "الماكينات البرجية (Stack)",
+      "ج": "الماكينات ذات الأسطوانة المركزية (Central Impression)",
+      "د": "ماكينات الأوفست"
+    }
+  },
+  {
+    "id": "Q41",
+    "type": "mcq",
+    "section": "ماكينات الفلكسو",
+    "text": "ما الميزة الرئيسية لماكينة الفلكسو ذات الأسطوانة المركزية (CI)؟",
+    "options": {
+      "أ": "رخص ثمنها وسهولة صيانتها",
+      "ب": "دقة التطابق اللوني (Registration) العالية جداً، خاصة للخامات المرنة والمطاطة",
+      "ج": "قدرتها على الطباعة على الوجهين في نفس الوقت",
+      "د": "حجمها الصغير جداً"
+    }
+  },
+  {
+    "id": "Q42",
+    "type": "mcq",
+    "section": "ماكينات الفلكسو",
+    "text": "في أي تطبيق تستخدم ماكينات الفلكسو المستقيمة (Inline) بكثرة؟",
+    "options": {
+      "أ": "طباعة الملصقات (Labels) والعلب الكرتونية القابلة للطي",
+      "ب": "طباعة أكياس البلاستيك الرقيقة جداً",
+      "ج": "طباعة الصحف",
+      "د": "طباعة المنسوجات"
+    }
+  },
+  {
+    "id": "Q43",
+    "type": "mcq",
+    "section": "ماكينات الفلكسو",
+    "text": "ما هي الماكينة البرجية (Stack Press) في الفلكسو؟",
+    "options": {
+      "أ": "ماكينة لا تستخدم الأنيلوكس",
+      "ب": "ماكينة بأسطوانة ضغط واحدة لجميع الألوان",
+      "ج": "ماكينة تكون فيها وحدات الطباعة مرصوصة فوق بعضها البعض عمودياً",
+      "د": "ماكينة تطبع لوناً واحداً فقط"
+    }
+  },
+  {
+    "id": "Q44",
+    "type": "mcq",
+    "section": "ماكينات الفلكسو",
+    "text": "أي من الماكينات التالية يسهل فيها طباعة وجه وظهر الخامة (Reverse Printing)؟",
+    "options": {
+      "أ": "الماكينة ذات الأسطوانة المركزية (CI)",
+      "ب": "ماكينة الروتوغرافيور",
+      "ج": "الطابعة المكتبية",
+      "د": "الماكينة البرجية (Stack Press) والماكينة المستقيمة (Inline)"
+    }
+  },
+  {
+    "id": "Q45",
+    "type": "mcq",
+    "section": "أحبار الفلكسو",
+    "text": "ما هي المكونات الأساسية الثلاثة لأي حبر فلكسو؟",
+    "options": {
+      "أ": "الملون (Pigment/Dye)، الوسيط/الرابط (Resin/Binder)، والمذيب (Solvent/Vehicle)",
+      "ب": "الماء، الكحول، والزيت",
+      "ج": "الورنيش، المجفف، والمطاط",
+      "د": "البلاستيك، الراتنج، والورق"
+    }
+  },
+  {
+    "id": "Q46",
+    "type": "mcq",
+    "section": "أحبار الفلكسو",
+    "text": "لماذا يجب التحكم في لزوجة (Viscosity) حبر الفلكسو باستمرار؟",
+    "options": {
+      "أ": "لمنع الحبر من التجمد",
+      "ب": "للحفاظ على لون ثابت وقوة تغطية منتظمة أثناء الطباعة",
+      "ج": "لتغيير لون الحبر أثناء التشغيل",
+      "د": "لتقليل سرعة الماكينة"
+    }
+  },
+  {
+    "id": "Q47",
+    "type": "mcq",
+    "section": "أحبار الفلكسو",
+    "text": "كيف تقاس لزوجة الأحبار السائلة في المطبعة عادةً؟",
+    "options": {
+      "أ": "بالميزان الرقمي",
+      "ب": "بالترمومتر",
+      "ج": "باستخدام كأس قياس اللزوجة (مثل Zahn Cup أو DIN cup) وحساب الثواني",
+      "د": "بالعين المجردة"
+    }
+  },
+  {
+    "id": "Q48",
+    "type": "mcq",
+    "section": "أحبار الفلكسو",
+    "text": "ماذا يحدث إذا تبخر المذيب من الحبر أثناء دورة الطباعة؟",
+    "options": {
+      "أ": "تقل اللزوجة ويصبح الحبر خفيفاً",
+      "ب": "يتحسن اللون ويزداد لمعاناً",
+      "ج": "يصبح الحبر قابلاً للاشتعال",
+      "د": "تزداد اللزوجة وقد يؤدي ذلك لطباعة غير نظيفة أو سد خلايا الأنيلوكس"
+    }
+  },
+  {
+    "id": "Q49",
+    "type": "mcq",
+    "section": "أحبار الفلكسو",
+    "text": "ما هي أحبار UV في الفلكسو؟",
+    "options": {
+      "أ": "أحبار تجف (تتصلد) فوراً عند تعرضها للأشعة فوق البنفسجية",
+      "ب": "أحبار تحتوي على نسبة عالية من الماء",
+      "ج": "أحبار تستخدم فقط لطباعة الكرتون المضلع",
+      "د": "أحبار غير مرئية"
+    }
+  },
+  {
+    "id": "Q50",
+    "type": "mcq",
+    "section": "أحبار الفلكسو",
+    "text": "ما هي الميزة الرئيسية لأحبار UV مقارنة بالأحبار المائية والمذيبات؟",
+    "options": {
+      "أ": "رائحتها القوية جداً",
+      "ب": "ثباتها العالي، وعدم جفافها على الأنيلوكس، ولمعانها الممتاز",
+      "ج": "سعرها الرخيص جداً",
+      "د": "سهولة إزالتها بالماء"
+    }
+  },
+  {
+    "id": "Q51",
+    "type": "mcq",
+    "section": "الخامات الطباعية",
+    "text": "ما هي ميزة الفلكسو الرئيسية عند الطباعة على الكرتون المضلع (Corrugated Board)؟",
+    "options": {
+      "أ": "تستخدم أحباراً زيتية ثقيلة",
+      "ب": "تتطلب ضغطاً عالياً جداً مما يقوي الكرتون",
+      "ج": "تستخدم ضغطاً خفيفاً (Kiss Impression) لا يتلف أو يسحق التمويج داخل الكرتون",
+      "د": "تطبع بالأبيض والأسود فقط"
+    }
+  },
+  {
+    "id": "Q52",
+    "type": "mcq",
+    "section": "الخامات الطباعية",
+    "text": "ما هو البولي إيثيلين (PE) في تطبيقات الفلكسو؟",
+    "options": {
+      "أ": "نوع من الأفلام البلاستيكية المرنة يستخدم في صناعة الأكياس والتغليف",
+      "ب": "نوع من الأحبار المائية",
+      "ج": "مادة تصنع منها أسطوانة الأنيلوكس",
+      "د": "نوع من الورق المقوى"
+    }
+  },
+  {
+    "id": "Q53",
+    "type": "mcq",
+    "section": "الخامات الطباعية",
+    "text": "لماذا يتم معالجة الأفلام البلاستيكية (بالكورونا Corona Treatment) قبل الطباعة؟",
+    "options": {
+      "أ": "لتعقيم البلاستيك من البكتيريا",
+      "ب": "لزيادة التوتر السطحي (Surface Tension) للفيلم والسماح للحبر بالالتصاق",
+      "ج": "لتلوين البلاستيك باللون الأبيض",
+      "د": "لتقليل سمك البلاستيك"
+    }
+  },
+  {
+    "id": "Q54",
+    "type": "mcq",
+    "section": "التحكم في الشد (Web Tension)",
+    "text": "ما أهمية التحكم في الشد (Tension Control) للرول أثناء الطباعة؟",
+    "options": {
+      "أ": "لمنع تمزق اللوح الطباعي",
+      "ب": "لزيادة استهلاك الحبر",
+      "ج": "لتقليل درجة حرارة الماكينة",
+      "د": "للحفاظ على دقة التطابق اللوني (Registration) ومنع تجعد أو تمزق الخامة"
+    }
+  },
+  {
+    "id": "Q55",
+    "type": "mcq",
+    "section": "التحكم في الشد",
+    "text": "ما هي وحدة الرقصة (Dancer Roller) في ماكينة الفلكسو؟",
+    "options": {
+      "أ": "أسطوانة تتحرك لامتصاص التغيرات المفاجئة في الشد والحفاظ على استقراره",
+      "ب": "أسطوانة تقوم بخلط الحبر",
+      "ج": "وحدة تبريد في نهاية الماكينة",
+      "د": "أسطوانة مسؤولة عن القطع"
+    }
+  },
+  {
+    "id": "Q56",
+    "type": "mcq",
+    "section": "عيوب الطباعة",
+    "text": "ما هو عيب 'اكتساب النقطة' أو زيادة حجم النقطة (Dot Gain)؟",
+    "options": {
+      "أ": "اختفاء النقاط الصغيرة من التصميم",
+      "ب": "تحول الألوان الفاتحة إلى ألوان داكنة جداً فقط بسبب الحبر",
+      "ج": "طباعة نقطة الحبر بحجم أكبر من حجمها الفعلي على اللوح، مما يجعل الصورة أغمق",
+      "د": "ظهور بقع بيضاء في الأرضيات"
+    }
+  },
+  {
+    "id": "Q57",
+    "type": "mcq",
+    "section": "عيوب الطباعة",
+    "text": "ما هو السبب الرئيسي لزيادة حجم النقطة (Dot Gain) في الفلكسو بشكل مبالغ فيه؟",
+    "options": {
+      "أ": "استخدام أحبار خفيفة جداً",
+      "ب": "الضغط الزائد بين أسطوانة الطبع وأسطوانة الضغط (أو بين الأنيلوكس والطبع)",
+      "ج": "سرعة الماكينة البطيئة",
+      "د": "برودة الجو"
+    }
+  },
+  {
+    "id": "Q58",
+    "type": "mcq",
+    "section": "عيوب الطباعة",
+    "text": "ما هو تأثير الهالة (Halo Effect) في طباعة الفلكسو؟",
+    "options": {
+      "أ": "تراكم الحبر على حواف الحروف أو الخطوط نتيجة الضغط الزائد، مما يخلق حافة داكنة ومركزاً أفتح",
+      "ب": "تداخل لونين معاً لإنتاج لون ثالث",
+      "ج": "ظهور بقع بيضاء نتيجة نقص الحبر",
+      "د": "توهج الألوان تحت الأشعة الفوق بنفسجية"
+    }
+  },
+  {
+    "id": "Q59",
+    "type": "mcq",
+    "section": "عيوب الطباعة",
+    "text": "ما هو عيب 'الثقوب الدقيقة' أو (Pinholing) في الأرضيات المطبوعة؟",
+    "options": {
+      "أ": "ظهور خطوط طولية على الخامة",
+      "ب": "تغيير في درجة اللون",
+      "ج": "عدم جفاف الحبر",
+      "د": "ظهور نقاط صغيرة غير مطبوعة (بيضاء) داخل مناطق الأرضيات المليئة بالحبر"
+    }
+  },
+  {
+    "id": "Q60",
+    "type": "mcq",
+    "section": "عيوب الطباعة",
+    "text": "كيف يمكن معالجة مشكلة (Pinholing) غالباً؟",
+    "options": {
+      "أ": "بتقليل كمية الحبر بشكل كبير",
+      "ب": "بإيقاف الماكينة وتغيير اللوح",
+      "ج": "بتحسين لزوجة الحبر أو التحقق من التوتر السطحي للخامة",
+      "د": "بزيادة سرعة الطباعة للضعف"
+    }
+  },
+  {
+    "id": "Q61",
+    "type": "mcq",
+    "section": "عيوب الطباعة",
+    "text": "ماذا يسمى العيب الناتج عن عدم جفاف الحبر الأول قبل طباعة اللون الثاني عليه (Trapping issue)؟",
+    "options": {
+      "أ": "التلطيخ أو سوء التراكب اللوني",
+      "ب": "الاستطالة",
+      "ج": "انحراف الشبكة",
+      "د": "القطع غير المنتظم"
+    }
+  },
+  {
+    "id": "Q62",
+    "type": "mcq",
+    "section": "الألوان والفصل الملون",
+    "text": "ما هي الألوان الأساسية المستخدمة في الطباعة الملونة (Process Colors)؟",
+    "options": {
+      "أ": "الأحمر والأخضر والأزرق (RGB)",
+      "ب": "السماوي، الأزرق المحمر (الماجنتا)، الأصفر، والأسود (CMYK)",
+      "ج": "الأبيض والأسود والرمادي",
+      "د": "البرتقالي، الأخضر، والبنفسجي"
+    }
+  },
+  {
+    "id": "Q63",
+    "type": "mcq",
+    "section": "الألوان والفصل الملون",
+    "text": "ما المقصود بألوان البانتون (Pantone / Spot Colors) في الفلكسو؟",
+    "options": {
+      "أ": "ألوان تتكون من مزج CMYK أثناء الطباعة",
+      "ب": "ألوان شفافة تُستخدم للورنيش",
+      "ج": "ألوان مائية رديئة الجودة",
+      "د": "ألوان خاصة يتم خلطها وتجهيزها قبل الطباعة لتطابق درجة لونية محددة بدقة"
+    }
+  },
+  {
+    "id": "Q64",
+    "type": "mcq",
+    "section": "الألوان والفصل الملون",
+    "text": "ماذا يحدث عند تداخل زاويتين للشبكات (Screen Angles) بشكل خاطئ في الطباعة الملونة؟",
+    "options": {
+      "أ": "يظهر نمط بصري مزعج يسمى مواريه (Moiré)",
+      "ب": "يختفي اللون الأسود",
+      "ج": "تتمزق الخامة",
+      "د": "يجف الحبر بسرعة أكبر"
+    }
+  },
+  {
+    "id": "Q65",
+    "type": "mcq",
+    "section": "الألوان والفصل الملون",
+    "text": "في الفلكسو، لماذا يكون لون الأسود مائلاً غالباً بـ 45 درجة واللون الأصفر بـ 90 درجة تقريباً؟",
+    "options": {
+      "أ": "لتسريع عملية الغسيل",
+      "ب": "لتقليل استهلاك الحبر الأصفر",
+      "ج": "لتجنب تأثير المواريه (Moiré) وتوزيع النقاط بشكل مريح للعين",
+      "د": "بسبب حجم أسطوانة الأنيلوكس"
+    }
+  },
+  {
+    "id": "Q66",
+    "type": "mcq",
+    "section": "ما قبل الطباعة (Prepress)",
+    "text": "ما المقصود بـ 'التراكب' أو (Trapping) في مرحلة التصميم؟",
+    "options": {
+      "أ": "تصغير التصميم ليناسب مقاس اللوح",
+      "ب": "عمل تداخل بسيط جداً بين لونين متجاورين لتجنب ظهور خطوط بيضاء إذا حدث انحراف بسيط أثناء الطباعة",
+      "ج": "تحويل الصورة من ملونة إلى أبيض وأسود",
+      "د": "حفظ الملف بصيغة PDF"
+    }
+  },
+  {
+    "id": "Q67",
+    "type": "mcq",
+    "section": "ما قبل الطباعة",
+    "text": "أي البرامج التالية تعتبر الأشهر في إعداد تصميمات ما قبل الطباعة للفلكسو؟",
+    "options": {
+      "أ": "Microsoft Word",
+      "ب": "AutoCAD",
+      "ج": "Excel",
+      "د": "Adobe Illustrator / Esko DeskPack"
+    }
+  },
+  {
+    "id": "Q68",
+    "type": "mcq",
+    "section": "العمليات اللاحقة (Finishing)",
+    "text": "ما هو التكسير الداخلي (Inline Die-cutting) في ماكينات الفلكسو؟",
+    "options": {
+      "أ": "عملية قطع وتشكيل الخامة المطبوعة في نفس خط الماكينة فور الانتهاء من الطباعة",
+      "ب": "تكسير الألواح القديمة لإعادة تدويرها",
+      "ج": "كسر أسطوانة الأنيلوكس التالفة",
+      "د": "قص حواف الرول فقط"
+    }
+  },
+  {
+    "id": "Q69",
+    "type": "mcq",
+    "section": "العمليات اللاحقة",
+    "text": "ما هي الفائدة من وضع طبقة الورنيش (Varnishing) في وحدة الطباعة الأخيرة؟",
+    "options": {
+      "أ": "زيادة وزن الخامة",
+      "ب": "تفتيح لون الطباعة",
+      "ج": "حماية الحبر من الخدش والاحتفاظ بلمعان أو إطفاء سطح المطبوعات",
+      "د": "لصق طبقتين من البلاستيك"
+    }
+  },
+  {
+    "id": "Q70",
+    "type": "mcq",
+    "section": "الصيانة والأمان",
+    "text": "لماذا يجب إبعاد مصادر اللهب المفتوح عن قسم الأحبار المذيبة (Solvent Inks)؟",
+    "options": {
+      "أ": "لأنها أحبار مائية تتبخر",
+      "ب": "لأن المذيبات المتطايرة قابلة للاشتعال السريع (Highly Flammable)",
+      "ج": "لأن اللهب يغير لون الحبر",
+      "د": "لأنها تتجمد بالحرارة"
+    }
+  },
+  {
+    "id": "Q71",
+    "type": "mcq",
+    "section": "الصيانة والأمان",
+    "text": "كيف يتم التعامل مع نفايات الأحبار المذيبة في المطبعة الحديثة؟",
+    "options": {
+      "أ": "تُسكب في الصرف الصحي العام",
+      "ب": "تُحرق في الهواء الطلق",
+      "ج": "تُترك لتتبخر في صالة العمل",
+      "د": "تُجمع في حاويات خاصة لإعادة التدوير أو الإعدام الآمن بيئياً"
+    }
+  },
+  {
+    "id": "Q72",
+    "type": "mcq",
+    "section": "قياس الجودة",
+    "text": "ما هو جهاز الدنستوميتر (Densitometer)؟",
+    "options": {
+      "أ": "جهاز لقياس الكثافة اللونية (Ink Density) على المطبوعات",
+      "ب": "جهاز لقياس سرعة الماكينة",
+      "ج": "جهاز لوزن لفات الورق",
+      "د": "جهاز لتقطيع الألواح"
+    }
+  },
+  {
+    "id": "Q73",
+    "type": "mcq",
+    "section": "قياس الجودة",
+    "text": "ما فائدة شريط التحكم اللوني (Color Control Bar) الموجود على حافة المطبوعات؟",
+    "options": {
+      "أ": "للزينة فقط",
+      "ب": "كمؤشر لمكان قص الخامة",
+      "ج": "لقياس الكثافة اللونية، وزيادة النقطة، والتطابق اللوني باستخدام أجهزة القياس",
+      "د": "لمنع تمزق الحواف"
+    }
+  },
+  {
+    "id": "Q74",
+    "type": "mcq",
+    "section": "تطبيقات الفلكسو",
+    "text": "ما المقصود بـ 'التغليف المرن' (Flexible Packaging)؟",
+    "options": {
+      "أ": "العلب المعدنية",
+      "ب": "العبوات غير الصلبة مثل أكياس الشيبسي والأغلفة البلاستيكية",
+      "ج": "الزجاجات البلاستيكية",
+      "د": "الكرتون المضلع"
+    }
+  },
+  {
+    "id": "Q75",
+    "type": "mcq",
+    "section": "تطبيقات الفلكسو",
+    "text": "لماذا تسيطر طباعة الفلكسو على قطاع التغليف المرن؟",
+    "options": {
+      "أ": "لأنها لا تحتاج إلى عمالة ماهرة",
+      "ب": "لأن ماكيناتها رخيصة جداً وتطبع ببطء",
+      "ج": "لأنها لا تستخدم أحباراً ملونة",
+      "د": "بسبب قدرتها على الطباعة على الأفلام الرقيقة غير المسامية بسرعة عالية وبأحبار سريعة الجفاف"
+    }
+  },
+  {
+    "id": "Q76",
+    "type": "mcq",
+    "section": "تطبيقات الفلكسو",
+    "text": "ما هي الميزة الأساسية لاستخدام ماكينات الفلكسو ضيقة اللفة (Narrow Web)؟",
+    "options": {
+      "أ": "مثالية لطباعة الملصقات (Labels) بكميات كبيرة وبجودة عالية مع عمليات تكسير متصلة",
+      "ب": "تستخدم لطباعة الكرتون المضلع الكبير",
+      "ج": "تطبع بالأبيض والأسود فقط",
+      "د": "بطيئة جداً مما يتيح مراجعة كل ملصق بالعين"
+    }
+  },
+  {
+    "id": "Q77",
+    "type": "mcq",
+    "section": "تطبيقات الفلكسو",
+    "text": "في طباعة الملصقات ذاتية اللصق (Self-Adhesive Labels)، ما هو 'ورق الظهر' أو (Liner)؟",
+    "options": {
+      "أ": "الورق الذي يُطبع عليه التصميم الأساسي",
+      "ب": "شريط لتغليف الماكينة",
+      "ج": "الورق المطلي بالسيليكون الذي يحمل الملصق ويتم التخلص منه عند الاستخدام",
+      "د": "حبر شفاف للحماية"
+    }
+  },
+  {
+    "id": "Q78",
+    "type": "mcq",
+    "section": "قياس الجودة",
+    "text": "ما هي وحدة قياس كثافة الخلايا في أسطوانة الأنيلوكس؟",
+    "options": {
+      "أ": "لتر لكل دقيقة",
+      "ب": "LPI (خط في البوصة) أو LPCM (خط في السنتيمتر)",
+      "ج": "كيلوجرام",
+      "د": "بكسل لكل بوصة (PPI)"
+    }
+  },
+  {
+    "id": "Q79",
+    "type": "mcq",
+    "section": "قياس الجودة",
+    "text": "ما هو الباركود (Barcode) ولماذا يجب الاهتمام باتجاه طباعته في الفلكسو؟",
+    "options": {
+      "أ": "صورة زخرفية للجمال",
+      "ب": "شريط ملون لمعرفة الألوان",
+      "ج": "نص يكتب بخط صغير جداً",
+      "د": "رمز شريطي يُفضل طباعته بحيث تكون أعمدته موازية لاتجاه الطباعة لتجنب اتساعها بسبب زيادة النقطة"
+    }
+  },
+  {
+    "id": "Q80",
+    "type": "mcq",
+    "section": "عيوب الطباعة",
+    "text": "ما هو عيب 'التلطيخ' أو (Smearing) في الفلكسو؟",
+    "options": {
+      "أ": "توزيع الحبر خارج حدود التصميم نتيجة عدم جفاف الحبر أو الاحتكاك المباشر بعد الطباعة",
+      "ب": "تحول لون الحبر للرمادي",
+      "ج": "انقطاع الرول",
+      "د": "احتراق الخامة"
+    }
+  },
+  {
+    "id": "Q81",
+    "type": "mcq",
+    "section": "تجهيز الألواح",
+    "text": "كيف يتم تحديد سمك اللوح المناسب (Plate Thickness) للطباعة؟",
+    "options": {
+      "أ": "بناءً على لون الحبر",
+      "ب": "سمك واحد ثابت لجميع الماكينات",
+      "ج": "بناءً على مواصفات الماكينة ونوع الخامة المطبوعة (مثل الكرتون المضلع يحتاج ألواحاً أكثر سمكاً)",
+      "د": "حسب درجة حرارة المطبعة"
+    }
+  },
+  {
+    "id": "Q82",
+    "type": "mcq",
+    "section": "تجهيز الألواح",
+    "text": "في الألواح الرقمية، ما هو دور ليزر الألياف (Fiber Laser)؟",
+    "options": {
+      "أ": "تكسير الخامة المطبوعة",
+      "ب": "حرق الطبقة السوداء (Mask) لتشكيل التصميم الإيجابي قبل التعريض الضوئي",
+      "ج": "تجفيف الحبر أثناء الطباعة",
+      "د": "إضاءة غرفة المطبعة"
+    }
+  },
+  {
+    "id": "Q83",
+    "type": "mcq",
+    "section": "البيئة والسلامة",
+    "text": "ما هو الـ VOC (المركبات العضوية المتطايرة) في الفلكسو؟",
+    "options": {
+      "أ": "نوع من ألواح البوليمر",
+      "ب": "وحدة تحكم بالكمبيوتر",
+      "ج": "أحبار مائية خالية من المذيبات",
+      "د": "أبخرة ضارة ناتجة عن تبخر المذيبات في الأحبار المذيبة وتتطلب أنظمة سحب ومعالجة"
+    }
+  },
+  {
+    "id": "Q84",
+    "type": "mcq",
+    "section": "البيئة والسلامة",
+    "text": "كيف تساهم أحبار الأشعة فوق البنفسجية (UV) في حماية البيئة مقارنة بالأحبار المذيبة؟",
+    "options": {
+      "أ": "لا تحتوي تقريباً على مركبات عضوية متطايرة (100% Solid)",
+      "ب": "لأنها أرخص في الثمن",
+      "ج": "لأنها تتبخر أسرع",
+      "د": "لأنها تصنع من مواد نباتية فقط"
+    }
+  },
+  {
+    "id": "Q85",
+    "type": "mcq",
+    "section": "البيئة والسلامة",
+    "text": "لماذا يجب ارتداء سدادات الأذن (Earplugs) في صالة طباعة الفلكسو؟",
+    "options": {
+      "أ": "لمنع دخول الحبر في الأذن",
+      "ب": "لتحسين التركيز",
+      "ج": "لحماية السمع من الضوضاء العالية المستمرة للماكينات ومراوح التجفيف",
+      "د": "لأنها جزء من الزي الرسمي فقط"
+    }
+  },
+  {
+    "id": "Q86",
+    "type": "mcq",
+    "section": "العمليات اللاحقة",
+    "text": "ما هو الترقق أو التغليف اللدن (Lamination)؟",
+    "options": {
+      "أ": "طباعة وجه وظهر",
+      "ب": "لصق طبقة فيلم شفاف فوق الخامة المطبوعة لحمايتها وإعطائها متانة ولمعاناً",
+      "ج": "تكسير الكرتون",
+      "د": "تنظيف الماكينة"
+    }
+  },
+  {
+    "id": "Q87",
+    "type": "mcq",
+    "section": "العمليات اللاحقة",
+    "text": "أين يستخدم التغليف البارد (Cold Foil) غالباً في الفلكسو؟",
+    "options": {
+      "أ": "في طباعة الكرتون المضلع الكبير",
+      "ب": "في طباعة الجرائد",
+      "ج": "لا يستخدم في الفلكسو",
+      "د": "في طباعة الملصقات والعبوات الفاخرة لإضافة لمسات معدنية ذهبية أو فضية بدون حرارة"
+    }
+  },
+  {
+    "id": "Q88",
+    "type": "mcq",
+    "section": "العمليات اللاحقة",
+    "text": "ما هي وحدة السليتر (Slitter) الملحقة بماكينة الفلكسو؟",
+    "options": {
+      "أ": "وحدة تقوم بشق الرول العريض طولياً إلى عدة رولات أضيق أثناء دورانه",
+      "ب": "وحدة تبريد",
+      "ج": "وحدة طي الكرتون",
+      "د": "وحدة إضافة الحبر"
+    }
+  },
+  {
+    "id": "Q89",
+    "type": "mcq",
+    "section": "تقنيات متقدمة",
+    "text": "ما هو الـ (HD Flexo) أو الفلكسو عالي الدقة؟",
+    "options": {
+      "أ": "استخدام شاشات تلفزيونية لمراقبة الماكينة",
+      "ب": "طباعة بألوان زاهية فقط",
+      "ج": "تقنية في صناعة الألواح الرقمية تسمح بطباعة شبكات دقيقة جداً (فوق 150 LPI) مع درجات لونية متدرجة بسلاسة تقارب الأوفست",
+      "د": "استخدام كاميرات لتصوير الماكينة"
+    }
+  },
+  {
+    "id": "Q90",
+    "type": "mcq",
+    "section": "تقنيات متقدمة",
+    "text": "ما هي 'نقطة القمة المسطحة' (Flat Top Dot) في ألواح الفلكسو الحديثة؟",
+    "options": {
+      "أ": "نقطة غير قادرة على الطباعة",
+      "ب": "نقطة بوليمر سطحها العلوي مسطح تماماً مما يقلل من زيادة حجم النقطة (Dot Gain) ويزيد من استقرار الطباعة",
+      "ج": "نقطة مدببة وحادة جداً",
+      "د": "عيب طباعي يجب تجنبه"
+    }
+  },
+  {
+    "id": "Q91",
+    "type": "mcq",
+    "section": "ما قبل الطباعة",
+    "text": "كيف يتم التعامل مع الصور (Images) ذات الألوان المتدرجة المستمرة لطباعتها في الفلكسو؟",
+    "options": {
+      "أ": "تُطبع كما هي بدون تعديل",
+      "ب": "تُطبع بلون واحد فقط",
+      "ج": "تُقسم إلى مساحات صلبة",
+      "د": "يتم تحويلها إلى شبكات (Halftones) مكونة من نقاط صغيرة بأحجام مختلفة تعطي الوهم بالتدرج اللوني"
+    }
+  },
+  {
+    "id": "Q92",
+    "type": "mcq",
+    "section": "ما قبل الطباعة",
+    "text": "ما هو مقياس (Bumping) في الفلكسو في تحضير الشبكات؟",
+    "options": {
+      "أ": "الحد الأدنى لنسبة النقطة التي يمكن للوح الاحتفاظ بها (مثلاً تحويل أي لون أقل من 2% إلى 2% لتجنب فقدان النقطة)",
+      "ب": "زيادة الضغط بين الأسطوانات",
+      "ج": "سرعة دوران الرول",
+      "د": "كمية المذيب في الحبر"
+    }
+  },
+  {
+    "id": "Q93",
+    "type": "mcq",
+    "section": "مكونات الماكينة",
+    "text": "ما هي وظيفة دليل الحافة (Web Guide)؟",
+    "options": {
+      "أ": "توجيه العمال لطريقة التشغيل",
+      "ب": "قطع حواف الرول الزائدة",
+      "ج": "استشعار حافة الرول وتصحيح مساره آلياً لضمان دخوله الماكينة بشكل مستقيم ودقيق",
+      "د": "تحديد كمية الحبر"
+    }
+  },
+  {
+    "id": "Q94",
+    "type": "mcq",
+    "section": "مكونات الماكينة",
+    "text": "كيف تعمل الكاميرا الفاحصة (Web Inspection Camera) في الفلكسو؟",
+    "options": {
+      "أ": "تسجيل فيديو لصالة العمل",
+      "ب": "التقاط صور سريعة للمطبوعات أثناء سيرها بسرعة عالية وعرضها ثابتة على شاشة للمشغل لمراقبة التطابق اللوني والجودة",
+      "ج": "قراءة الباركود للعملاء",
+      "د": "مراقبة درجة حرارة الماكينة"
+    }
+  },
+  {
+    "id": "Q95",
+    "type": "mcq",
+    "section": "الأحبار والتشغيل",
+    "text": "ما هو قياس 'الأس الهيدروجيني' (pH) ولماذا هو مهم في أحبار الفلكسو المائية؟",
+    "options": {
+      "أ": "قياس لزوجة الحبر",
+      "ب": "قياس درجة حرارة الحبر",
+      "ج": "قياس وزن الحبر",
+      "د": "قياس درجة الحموضة أو القلوية، وانخفاضه يؤدي إلى جفاف الحبر المائي داخل خلايا الأنيلوكس"
+    }
+  },
+  {
+    "id": "Q96",
+    "type": "mcq",
+    "section": "الأحبار والتشغيل",
+    "text": "ما هي المادة المضافة التي تُستخدم لرفع مستوى الـ pH في الأحبار المائية؟",
+    "options": {
+      "أ": "مخلوط من الأمين/الأمونيا",
+      "ب": "الماء النقي",
+      "ج": "الكحول",
+      "د": "الورنيش"
+    }
+  },
+  {
+    "id": "Q97",
+    "type": "mcq",
+    "section": "عيوب الطباعة",
+    "text": "ما هو عيب 'الترويس' أو (Feathering) في الفلكسو؟",
+    "options": {
+      "أ": "ظهور لون باهت",
+      "ب": "اختفاء الحروف",
+      "ج": "تمدد الحبر خارج حواف الحروف والخطوط بشكل غير منتظم يشبه الريشة نتيجة الضغط الزائد أو لزوجة خاطئة",
+      "د": "انقطاع الخامة بشكل يشبه الريشة"
+    }
+  },
+  {
+    "id": "Q98",
+    "type": "mcq",
+    "section": "عيوب الطباعة",
+    "text": "كيف يؤثر تآكل شفرة الدكتور بليد (Doctor Blade Wear) على الطباعة؟",
+    "options": {
+      "أ": "يجعل الطباعة أسرع",
+      "ب": "يزيد من كمية الحبر المنقولة ويقلل من دقة القشط مما يؤدي لطباعة داكنة أو متسخة",
+      "ج": "لا يؤثر على الإطلاق",
+      "د": "يقلل من استهلاك الحبر بشكل ملحوظ"
+    }
+  },
+  {
+    "id": "Q99",
+    "type": "mcq",
+    "section": "الصيانة والأمان",
+    "text": "لماذا يتم استخدام أجهزة إزالة الكهرباء الاستاتيكية (Anti-static Bars) عند الطباعة على البلاستيك؟",
+    "options": {
+      "أ": "لإنارة الماكينة",
+      "ب": "لتسخين الخامة",
+      "ج": "للتواصل اللاسلكي",
+      "د": "لإزالة الشحنات الكهربائية التي تجذب الغبار والأوساخ وتسبب مشاكل في الطباعة والشرر"
+    }
+  },
+  {
+    "id": "Q100",
+    "type": "mcq",
+    "section": "مستقبل الفلكسو",
+    "text": "ما هو الاتجاه الرئيسي الحديث في تكنولوجيا الفلكسو؟",
+    "options": {
+      "أ": "الأتمتة العالية، وتقنيات الإعداد الأوتوماتيكي (Auto-registration & Auto-impression) لتقليل الفاقد وتوفير الوقت",
+      "ب": "العودة لاستخدام الأحبار الزيتية القديمة",
+      "ج": "استخدام الألواح الخشبية مرة أخرى",
+      "د": "تقليل سرعة الماكينات لصالح الجودة اليدوية"
+    }
+  },
+  {
+    "id": "Q101",
+    "type": "essay",
+    "section": "أساسيات الفلكسو",
+    "text": "اشرح باختصار آلية عمل طباعة الفلكسوغرافيا، وما هي أهم مميزاتها التي جعلتها رائدة في مجال التغليف؟"
+  },
+  {
+    "id": "Q102",
+    "type": "essay",
+    "section": "أنظمة التحبير",
+    "text": "ما هي أسطوانة الأنيلوكس (Anilox Roller)؟ وما هو دورها الأساسي في ماكينة الفلكسو؟"
+  },
+  {
+    "id": "Q103",
+    "type": "essay",
+    "section": "الخامات الطباعية",
+    "text": "لماذا تعتبر طباعة الفلكسو الطريقة الأمثل والأكثر استخداماً لطباعة الكرتون المضلع (Corrugated Board)؟"
+  },
+  {
+    "id": "Q104",
+    "type": "essay",
+    "section": "مكونات الماكينة",
+    "text": "اذكر المكونات (الأسطوانات) الرئيسية لوحدة الطباعة الفلكسوغرافية المجهزة بنظام الغرفة المغلقة (Chambered Doctor Blade)، واشرح وظيفة كل منها بإيجاز."
+  },
+  {
+    "id": "Q105",
+    "type": "essay",
+    "section": "عيوب الطباعة",
+    "text": "ما هو عيب 'زيادة حجم النقطة' (Dot Gain) في الفلكسو؟ اذكر أسبابه وكيف يمكن تعويضه؟"
+  },
+  {
+    "id": "Q106",
+    "type": "essay",
+    "section": "تجهيز الألواح",
+    "text": "اشرح ظاهرة 'استطالة اللوح' (Plate Elongation/Distortion) التي تحدث في الفلكسو، وكيف يتم معالجتها قبل صناعة الألواح؟"
+  },
+  {
+    "id": "Q107",
+    "type": "essay",
+    "section": "ماكينات الفلكسو",
+    "text": "ما هي الماكينة ذات الأسطوانة المركزية (Central Impression - CI)؟ ولماذا هي الخيار الأفضل لطباعة الأفلام البلاستيكية المرنة؟"
+  },
+  {
+    "id": "Q108",
+    "type": "essay",
+    "section": "أحبار الفلكسو",
+    "text": "قارن باختصار بين أنواع الأحبار الثلاثة الرئيسية المستخدمة في الفلكسو: (الأحبار المذيبة، الأحبار المائية، وأحبار UV) من حيث التطبيق والأثر البيئي."
+  },
+  {
+    "id": "Q109",
+    "type": "essay",
+    "section": "أنظمة التحبير",
+    "text": "ما هي وظيفة 'طبيب الشفرة' (Doctor Blade) في نظام التحبير، ولماذا يُعد ضرورياً لضمان جودة الطباعة؟"
+  },
+  {
+    "id": "Q110",
+    "type": "essay",
+    "section": "تجهيز الألواح",
+    "text": "ما الفرق بين صناعة ألواح الفلكسو بالطريقة التقليدية (Analog) والطريقة الرقمية أو النقش المباشر بالليزر (CTP / DLE)؟"
+  },
+  {
+    "id": "Q111",
+    "type": "essay",
+    "section": "الخامات الطباعية",
+    "text": "ما هي معالجة الكورونا (Corona Treatment)؟ ولماذا هي خطوة ضرورية قبل طباعة الأفلام البلاستيكية؟"
+  },
+  {
+    "id": "Q112",
+    "type": "essay",
+    "section": "مكونات الماكينة",
+    "text": "كيف يؤثر نوع وسمك الشريط اللاصق (Mounting Tape) المستخدم لتثبيت اللوح على جودة الطباعة؟ (متى نستخدم الشريط الصلب ومتى نستخدم الناعم؟)"
+  },
+  {
+    "id": "Q113",
+    "type": "essay",
+    "section": "الألوان والفصل الملون",
+    "text": "ما هو تأثير 'المواريه' (Moiré) في الطباعة الملونة؟ وكيف يمكن تجنبه في طباعة الفلكسو؟"
+  },
+  {
+    "id": "Q114",
+    "type": "essay",
+    "section": "الأحبار والتشغيل",
+    "text": "في أحبار الفلكسو المائية، ما هي العلاقة بين اللزوجة ودرجة الـ pH (الأس الهيدروجيني)؟ ولماذا يجب مراقبتهما باستمرار؟"
+  },
+  {
+    "id": "Q115",
+    "type": "essay",
+    "section": "البيئة والسلامة",
+    "text": "اذكر أهم إجراءات الأمن والسلامة التي يجب اتباعها داخل مطابع الفلكسو (خاصة عند استخدام الأحبار القائمة على المذيبات) لحماية العمال والبيئة."
+  }
+];
+
+let state = { screen: 'start', mode: 'exam', current: 0, answers: {}, submitted: false };
+
+function $(id) { return document.getElementById(id); }
+function app() { return $('app'); }
+
+function updateHeader() {
+  const stat = $('hdr-stat');
+  if (state.screen === 'exam') {
+    const answered = Object.keys(state.answers).filter(k => state.answers[k].toString().trim() !== '').length;
+    stat.innerHTML = `<span>${answered}</span> / ${QUESTIONS.length} مجاب`;
+  } else if (state.screen === 'results') {
+    stat.innerHTML = 'النتائج';
+  } else {
+    stat.innerHTML = '—';
+  }
+}
+
+function render() {
+  updateHeader();
+  if (state.screen === 'start') renderStart();
+  else if (state.screen === 'exam') renderExam();
+  else if (state.screen === 'results') renderResults();
+}
+
+function renderStart() {
+  const total = QUESTIONS.length;
+  const totalMcq = QUESTIONS.filter(q => q.type === 'mcq').length;
+  const totalEssay = QUESTIONS.filter(q => q.type === 'essay').length;
+
+  app().innerHTML = `
+    <div class="start-screen">
+      <h1>ترميم المطبوعات<br>بنك الأسئلة</h1>
+      <div class="stat-row">
+        <div class="stat-cell"><span class="num">${totalMcq}</span><span class="lbl">اختيار متعدد</span></div>
+        <div class="stat-cell"><span class="num">${totalEssay}</span><span class="lbl">مقالي</span></div>
+        <div class="stat-cell total"><span class="num">${total}</span><span class="lbl">المجموع</span></div>
+      </div>
+      <div class="mode-cards">
+        <div class="mode-card ${state.mode==='exam'?'active':''}" onclick="setMode('exam')">
+          <div class="mode-icon">[ ]</div>
+          <div class="mode-title">وضع الامتحان</div>
+          <div class="mode-desc">أجب على جميع الأسئلة ثم قم بالتسليم لرؤية النتيجة.</div>
+        </div>
+        <div class="mode-card ${state.mode==='practice'?'active':''}" onclick="setMode('practice')">
+          <div class="mode-icon">[✓]</div>
+          <div class="mode-title">وضع التدريب</div>
+          <div class="mode-desc">ملاحظات فورية وإجابات نموذجية بعد كل سؤال.</div>
+        </div>
+      </div>
+      <button class="btn-start" onclick="startExam()">البدء ←</button>
+    </div>`;
+}
+
+function setMode(m) {
+  state.mode = m;
+  renderStart();
+}
+
+function startExam() {
+  state.screen = 'exam';
+  state.current = 0;
+  state.answers = {};
+  render();
+}
+
+function renderExam() {
+  const q = QUESTIONS[state.current];
+  const answered = state.answers[q.id] !== undefined && state.answers[q.id].toString().trim() !== '';
+  const correct = ANSWERS[q.id];
+  const userAns = state.answers[q.id];
+  const showFeedback = state.mode === 'practice' && answered;
+  const total = QUESTIONS.length;
+  const answeredCount = Object.keys(state.answers).filter(k => state.answers[k].toString().trim() !== '').length;
+  const isLast = state.current === total - 1;
+  const allAnswered = answeredCount === total;
+
+  // Progress dots
+  let dots = '<div class="progress-track">';
+  for (let i = 0; i < total; i++) {
+    const dq = QUESTIONS[i];
+    let cls = 'p-dot';
+    if (i === state.current) cls += ' current';
+    else if (state.answers[dq.id] !== undefined && state.answers[dq.id].toString().trim() !== '') {
+      if (state.mode === 'practice' && dq.type !== 'essay') {
+        cls += state.answers[dq.id] === ANSWERS[dq.id] ? ' ok' : ' bad';
+      } else {
+        cls += ' skipped';
+      }
+    }
+    dots += `<div class="${cls}" title="سؤال ${i+1}" onclick="jumpTo(${i})"></div>`;
+  }
+  dots += '</div>';
+
+  // Options
+  let optHtml = '';
+  if (q.type === 'mcq') {
+    optHtml = '<div class="options">';
+    for (const [k, v] of Object.entries(q.options)) {
+      let cls = 'option';
+      if (answered && state.mode === 'practice') {
+        cls += ' locked';
+        if (showFeedback) {
+          if (k === correct) cls += ' correct';
+          else if (k === userAns) cls += ' wrong';
+        }
+      } else {
+        if (k === userAns) cls += ' selected';
+      }
+      optHtml += `<button class="${cls}" onclick="doAnswer('${q.id}','${k}')" ${answered && state.mode==='practice' ? 'disabled' : ''}>
+        <span class="opt-key">${k}</span><span>${v}</span>
+      </button>`;
+    }
+    optHtml += '</div>';
+  } else if (q.type === 'essay') {
+      const val = state.answers[q.id] || '';
+      const isLocked = (state.mode === 'practice' && answered) ? 'readonly' : '';
+      optHtml = `<textarea class="option textarea-essay" rows="5" placeholder="اكتب إجابتك هنا..." onchange="doAnswer('${q.id}', this.value, true)" ${isLocked}>${val}</textarea>`;
+      if (showFeedback) {
+         optHtml += `<div class="feedback ok">تم تسجيل الإجابة. في الامتحان العملي يتم التقييم يدوياً.</div>`;
+      }
+  }
+
+  let unansweredNotice = '';
+  if (state.mode === 'exam' && isLast && !allAnswered) {
+    const missing = total - answeredCount;
+    unansweredNotice = `<div class="notice">يوجد ${missing} سؤال غير مجاب — استخدم النقاط العلوية للرجوع والتأكد.</div>`;
+  }
+
+  let navRight = '';
+  if (!isLast) {
+    navRight = `<button class="btn" onclick="nextQ()">التالي ←</button>`;
+  } else {
+    navRight = `<button class="btn primary" onclick="submitExam()" ${state.mode==='exam'&&!allAnswered?'disabled':''}>إنهاء وتسليم</button>`;
+  }
+
+  app().innerHTML = `
+    ${dots}
+    <div class="q-header">
+      <span class="q-num">سؤال ${state.current+1} من ${total}</span>
+      <span class="q-section-badge">${q.section} · ${q.type==='mcq'?'اختيار متعدد':'سؤال مقالي'}</span>
+    </div>
+    <div class="q-text">${q.text}</div>
+    ${optHtml}
+    ${unansweredNotice}
+    <div class="nav-row">
+      ${navRight}
+      <span class="nav-center">${answeredCount} / ${total}</span>
+      <button class="btn" onclick="prevQ()" ${state.current===0?'disabled':''}>→ السابق</button>
+    </div>`;
+}
+
+function doAnswer(id, val, isEssay = false) {
+  if (state.mode === 'practice' && state.answers[id] !== undefined && !isEssay) return;
+  state.answers[id] = val;
+  if (isEssay) {
+      updateHeader();
+      // Do not re-render immediately for essays to prevent losing focus
+  } else {
+      render();
+  }
+}
+
+function nextQ() { if (state.current < QUESTIONS.length - 1) { state.current++; render(); } }
+function prevQ() { if (state.current > 0) { state.current--; render(); } }
+function jumpTo(i) { state.current = i; render(); }
+
+function submitExam() {
+  state.screen = 'results';
+  render();
+}
+
+function renderResults() {
+  let correct = 0, mcqC = 0, essayC = 0;
+  QUESTIONS.forEach(q => {
+    if (q.type === 'essay') {
+        if (state.answers[q.id] && state.answers[q.id].trim().length > 0) {
+            correct++; // Mark essay as "complete" for stat purposes
+            essayC++;
+        }
+    } else {
+        if (state.answers[q.id] === ANSWERS[q.id]) {
+            correct++;
+            mcqC++;
+        }
+    }
+  });
+
+  const total = QUESTIONS.length;
+  const totalMcq = QUESTIONS.filter(q => q.type === 'mcq').length;
+  const totalEssay = QUESTIONS.filter(q => q.type === 'essay').length;
+  const pct = Math.round((correct / total) * 100);
+  const grade = pct>=90?'امتياز':pct>=80?'جيد جداً':pct>=70?'جيد':pct>=60?'مقبول':'ضعيف';
+
+  let reviewHtml = '';
+  QUESTIONS.forEach((q, i) => {
+    const isEssay = q.type === 'essay';
+    const ok = isEssay ? (state.answers[q.id] && state.answers[q.id].trim() !== '') : (state.answers[q.id] === ANSWERS[q.id]);
+
+    if (!ok) {
+      const ca = ANSWERS[q.id];
+      let correctText = '';
+      if (q.type === 'mcq') correctText = `${ca}) ${q.options[ca]}`;
+      else correctText = 'تم ترك السؤال المقالي فارغاً.';
+
+      let yourText = '';
+      if (state.answers[q.id] !== undefined && state.answers[q.id].trim() !== '') {
+        if (q.type === 'mcq') yourText = `${state.answers[q.id]}) ${q.options[state.answers[q.id]]}`;
+        else yourText = state.answers[q.id];
+      } else {
+        yourText = 'لم يتم الإجابة';
+      }
+      reviewHtml += `<div class="review-item">
+        <div class="review-qnum">سؤال ${i+1} · ${q.section}</div>
+        <div class="review-qtext">${q.text}</div>
+        <div class="review-your">✗ إجابتك: ${yourText}</div>
+        ${q.type === 'mcq' ? `<div class="review-correct">✓ الصحيح: ${correctText}</div>` : ''}
+      </div>`;
+    }
+  });
+
+  app().innerHTML = `
+    <div class="results-wrap">
+      <div class="score-hero">
+        <div class="big-num">${pct}%</div>
+        <div class="grade-badge">التقدير: ${grade}</div>
+        <div class="results-grid">
+          <div class="r-cell"><div class="rn">${correct}<span style="font-size:14px;color:var(--text-tertiary)">/${total}</span></div><div class="rl">نقاط صحيحة/مكتملة</div></div>
+          <div class="r-cell"><div class="rn">${mcqC}<span style="font-size:14px;color:var(--text-tertiary)">/${totalMcq}</span></div><div class="rl">اختيار متعدد</div></div>
+          <div class="r-cell"><div class="rn">${essayC}<span style="font-size:14px;color:var(--text-tertiary)">/${totalEssay}</span></div><div class="rl">مقالي (مكتمل)</div></div>
+        </div>
+        <button class="btn-retake" onclick="goHome()">← إعادة الامتحان</button>
+      </div>
+      ${reviewHtml ? `<div class="review-section"><h2>إجابات خاطئة أو متروكة (${total-correct})</h2>${reviewHtml}</div>` : '<div style="text-align:center;padding:2rem;font-family:var(--sans);font-size:16px;color:var(--text-tertiary);">أداء ممتاز — جميع الأسئلة صحيحة ومكتملة.</div>'}
+    </div>`;
+}
+
+function goHome() {
+  state = { screen: 'start', mode: state.mode, current: 0, answers: {}, submitted: false };
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
