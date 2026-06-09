@@ -342,7 +342,7 @@ body {
   color: white;
   border-color: var(--text);
 }
-.btn.primary:hover { opacity: 0.85; }
+.btn.primary:hover:not(:disabled) { background: var(--text); border-color: var(--text); opacity: 0.85; }
 .nav-center { font-size: 14px; color: var(--text-tertiary); font-family: var(--sans); }
 
 /* Section divider */
